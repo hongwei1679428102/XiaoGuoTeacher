@@ -190,7 +190,9 @@ class KokoroTTS:
         if not voice_file.exists():
             raise FileNotFoundError(f"声音文件不存在: {voice_file}")
             
-        self.voicepack = torch.load(voice_file, weights_only=True).to(self.device)
+        # self.voicepack = torch.load(voice_file, weights_only=True).to(self.device)
+        
+        self.voicepack = torch.load(voice_file).to(self.device)
         print(f"已加载声音: {self.voice_name}")
 
     def speak(self, text: str) -> Tuple[bytes, str]:
