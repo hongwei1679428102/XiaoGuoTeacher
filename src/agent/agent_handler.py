@@ -1,12 +1,19 @@
 import re
 from typing import Dict, Optional
 from src.image.image_generator import ImageGenerator  # 假设你有图像生成器
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AgentHandler:
     """Agent处理类，用于判断和处理不同类型的请求"""
     
     def __init__(self):
-        self.image_generator = ImageGenerator()
+        try:
+            self.image_generator = ImageGenerator()
+        except Exception as e:
+            logger.error(f"Failed to initialize ImageGenerator: {str(e)}")
+            self.image_generator = None
         
     def analyze_request(self, text: str) -> Dict:
         """分析用户请求类型"""
@@ -45,6 +52,12 @@ class AgentHandler:
         analysis = self.analyze_request(text)
         
         if analysis["type"] == "image":
+            if not self.image_generator:
+                return {
+                    "type": "error",
+                    "message": "Image generation not available"
+                }
+                
             try:
                 image_data = await self.image_generator.generate(analysis["description"])
                 return {
